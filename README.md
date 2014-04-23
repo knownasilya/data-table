@@ -17,6 +17,8 @@ Install via Bower, `bower install data-table --save`, then include in your page,
 
 ### Required
 - datasets - an Array of one or more datasets, each dataset is an Array of objects.
+
+### Optional
 - aliases - An object mapping dataset object attribute names to column names, e.g. `{ 'Name': ['name', 'user-name'] }`.
 
 [1]: http://emberjs.jsbin.com/nuroraxe/2/
