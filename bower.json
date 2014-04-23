@@ -1,0 +1,27 @@
+{
+  "name": "data-table",
+  "version": "0.0.0",
+  "description": "{{data-table}} - Ember Component for comparing two or more similar datasets.",
+  "homepage": "https://github.com/knownasilya/data-table",
+  "authors": [
+    "Ilya Radchenko <ilya@burstcreations.com>"
+  ],
+  "main": "dist/data-table.js",
+  "keywords": [
+    "data",
+    "data table",
+    "comparison",
+    "tabular",
+    "component",
+    "ember",
+    "emberjs"
+  ],
+  "license": "MIT",
+  "ignore": [
+    "**/.*",
+    "node_modules",
+    "bower_components",
+    "test",
+    "tests"
+  ]
+}
