@@ -1,9 +1,5 @@
 <thead>
-  <tr>
-    {{#each columns}}
-      <th>{{name}}</th>
-    {{/each}}
-  </tr>
+  {{view 'data-table-header'}}
 </thead>
 <tbody>
   {{#each data}}

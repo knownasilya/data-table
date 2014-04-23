@@ -15,14 +15,15 @@ gulp.task('clean-dist', function () {
 });
 
 gulp.task('templates', function(){
-  gulp.src('src/template.hbs')
+  gulp.src('src/**/*.hbs')
     .pipe(handlebars({
       outputType: 'browser',
-      processName: function () {
+      processName: function (fileName, b) {
+        var name = fileName.slice(0, -4);
         return 'components/' + name;
       }
      }))
-    .pipe(rename(name + '.template.js'))
+    .pipe(concat(name + '.template.js'))
     .pipe(gulp.dest('dist'))
     .pipe(uglify())
     .pipe(rename(name + '.template.min.js'))

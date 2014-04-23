@@ -5,6 +5,23 @@
   <title>data-table</title>
 
   <link rel="stylesheet" href="//netdna.bootstrapcdn.com/bootstrap/3.1.1/css/bootstrap.min.css">
+  <style>
+    [draggable] {
+      cursor: move;
+
+      -moz-user-select: none;
+      -khtml-user-select: none;
+      -webkit-user-select: none;
+      user-select: none;
+      /* Required to make elements draggable in old WebKit */
+      -khtml-user-drag: element;
+      -webkit-user-drag: element;
+    }
+
+    tr.over th {
+      background-color: #eee;
+    }
+  </style>
 </head>
 
 <body>
@@ -17,13 +34,18 @@
 
   <!-- application.hbs template -->
   <script type="text/x-handlebars">
-    {{data-table datasets=datasets}}
+    {{data-table-header-bin columns=columns}}
+    {{data-table datasets=datasets columns=columns}}
   </script>
 
   <script>
     var App = Ember.Application.create();
 
     App.ApplicationController = Ember.Controller.extend({
+      columns: [
+        { name: 'Name', attributes: ['name'] },
+        { name: 'State', attributes: ['us_state', 'state'] }
+      ],
       datasets: [
         [ 
           { name: 'Bob', state: 'CT' },
