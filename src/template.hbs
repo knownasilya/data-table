@@ -1,0 +1,16 @@
+<thead>
+  <tr>
+    {{#each columns}}
+      <th>{{name}}</th>
+    {{/each}}
+  </tr>
+</thead>
+<tbody>
+  {{#each data}}
+    <tr>
+      {{#each this}}
+        <td>{{this}}</td>
+      {{/each}}
+    </tr>
+  {{/each}}
+</tbody>
