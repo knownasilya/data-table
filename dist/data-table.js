@@ -73,16 +73,14 @@ var DataTableHeaderCollection = Ember.CollectionView.extend({
     dragOver: function (event) {
       Ember.run.throttle(this, function () {
         if (event.originalEvent.offsetX > (this.$().width() / 2)) {
-          console.log('right');
           this.set('dropSide', 'right');
         }
         else {
-          console.log('left');
           this.set('dropSide', 'left');
         }
 
         this.set('parentView.over', true);
-      }, 150);
+      }, 300);
     },
 
     dragLeave: function () {
@@ -133,7 +131,6 @@ var DataTableHeaderCollection = Ember.CollectionView.extend({
       }
     }
     else {
-      console.log('duplicate.. delete me!');      
       if (column) {
         this.set('columnsNotInHeader', columnsNotInHeader.without(column));
       }
@@ -212,31 +209,23 @@ var DataTableComponent = Ember.Component.extend({
   }.on('init'),
 
   data: function () {
-    var datasets = this.get('datasets');
+    var dataset = this.get('dataset');
     var columns = this.get('columns');
     var self = this;
 
-    if (!Ember.isArray(datasets)) {
-      throw new Error('Datasets input must be an array.');
+    if (!Ember.isArray(dataset)) {
+      throw new Error('Dataset input must be an array.');
     }
 
-    return datasets.reduce(function (previous, current) {
-      if (!Ember.isArray(current)) {
-        throw new Error('Dataset must be an array.');
+    return dataset.map(function (item) {
+      if (columns) {
+        return self.columnAttributeMap(columns, item);
       }
-
-      var mapped = current.map(function (item) {
-        if (columns) {
-          return self.columnAttributeMap(columns, item);
-        }
-        else {
-          return [item];
-        }
-      });
-
-      return previous.concat(mapped);
-    }, []);
-  }.property('datasets', 'columns.length'),
+      else {
+        return [item];
+      }
+    });
+  }.property('dataset', 'columns.length'),
 
   columnAttributeMap: function (columns, row) {
     if (!row) {
@@ -244,14 +233,15 @@ var DataTableComponent = Ember.Component.extend({
     }
 
     var result = [],
+      rowJson = row.toJSON(),
       col = 0,
       prop, columnIndex;
 
-    for (prop in row) {
-      if (row.hasOwnProperty(prop)) {
+    for (prop in rowJson) {
+      if (rowJson.hasOwnProperty(prop)) {
         for(; col < columns.length; col++) {
           if (columns[col].attributes.contains(prop)) {
-            result.splice(col, 0, row[prop]);
+            result.splice(col, 0, rowJson[prop]);
           }
         }
         col = 0;

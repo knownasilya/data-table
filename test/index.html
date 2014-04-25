@@ -10,12 +10,18 @@
       box-sizing: border-box; 
     }
 
+    .container {
+      margin-top: 5em;
+    }
+
     th.right {
       border-right: 2px solid #666;
+      border-left: 0;
     }
     
     th.left {
       border-left: 2px solid #666;
+      border-right: 0;
     }
 
     [draggable] {
@@ -45,19 +51,57 @@
   <script src="jquery/dist/jquery.min.js"></script>
   <script src="handlebars/handlebars.js"></script>
   <script src="ember/ember.js"></script>
+  <script src="ember-data/ember-data.js"></script>
   <script src="data-table.template.js"></script>
   <script src="data-table.js"></script>
   <script src="bootstrap/dist/js/bootstrap.min.js"></script>
 
   <!-- application.hbs template -->
   <script type="text/x-handlebars">
-    {{data-table datasets=datasets availableColumns=columns requiredHeaderItem=requiredHeaderItem}}
+    <div class="container">
+      {{data-table dataset=content availableColumns=columns requiredHeaderItem=requiredHeaderItem}}
+    </div>
   </script>
 
   <script>
     var App = Ember.Application.create();
 
-    App.ApplicationController = Ember.Controller.extend({
+    App.ApplicationAdapter = DS.FixtureAdapter;
+
+    App.DataModel = DS.Model.extend({
+      name: DS.attr('string'),
+      state: DS.attr('string'),
+      nickname: DS.attr('string')
+    });
+
+    App.DataModel.reopenClass({
+      FIXTURES: [
+        {
+          id: 1,
+          name: 'Bob',
+          nickname: 'Bobby',
+          state: 'CT'
+        }, {
+          id: 2,
+          name: 'Janet',
+          nickname: 'Jan',
+          state: 'NJ'
+        }, {
+          id: 3,
+          name: 'John',
+          nickname: 'J',
+          state: 'WY'
+        }
+      ]
+    });
+
+    App.ApplicationRoute = Ember.Route.extend({
+      model: function () {
+        return this.store.find('data');
+      }
+    });
+
+    App.ApplicationController = Ember.ArrayController.extend({
       requiredHeaderItem: function () {
         var columns = this.get('columns');
 
