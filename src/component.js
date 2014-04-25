@@ -37,8 +37,13 @@ var DataTableHeaderBinComponent = Ember.Component.extend({
 
 var DataTableHeaderItemComponent = Ember.Component.extend({
   classNames: ['label', 'label-default'],
+  classNameBindings: ['dataType'],
   attributeBindings: ['draggable'],
   draggable: 'true',
+
+  dataType: function () {
+    return 'type-' + this.get('content.dataType') || 'default';
+  }.property('content.dataType'),
 
   dragStart: function (event) {
     var data = {
@@ -187,8 +192,8 @@ var DataTableHeaderCollection = Ember.CollectionView.extend({
 var DataTableComponent = Ember.Component.extend({
   columns: [],
   availableColumns: function () {
-    var dataset = this.get('dataset');
-    return this.generateColumns(Ember.keys(dataset.get('content.firstObject').toJSON()));
+    var firstObject = this.get('dataset.content.firstObject');
+    return this.generateColumns(Ember.keys(firstObject.toJSON()), firstObject.constructor.typeKey);
   }.property(),
 
   columnsNotInHeader: function () {
@@ -222,7 +227,6 @@ var DataTableComponent = Ember.Component.extend({
     if (!Ember.isArray(dataset)) {
       throw new Error('Dataset input must be an array.');
     }
-
 
     return dataset.map(function (item) {
       if (columns) {
