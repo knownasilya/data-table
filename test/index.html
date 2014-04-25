@@ -6,6 +6,18 @@
 
   <link rel="stylesheet" href="bootstrap/dist/css/bootstrap.min.css">
   <style>
+    td {
+      box-sizing: border-box;
+    }
+
+    td.right {
+      border-right: 2px solid #666;
+    }
+    
+    td.left {
+      border-left: 2px solid #666;
+    }
+
     [draggable] {
       cursor: move;
 
@@ -41,11 +53,16 @@
     var App = Ember.Application.create();
 
     App.ApplicationController = Ember.Controller.extend({
-      requiredHeaderItem: { name: 'Name', attributes: ['name'] },
+      requiredHeaderItem: function () {
+        var columns = this.get('columns');
+
+        return columns.findBy('name', 'Name');
+      }.property('columns'),
+
       columns: [
-        { name: 'Name', attributes: ['name'] },
-        { name: 'State', attributes: ['us_state', 'state'] },
-        { name: 'Nickname', attributes: ['nickname'] }
+        Ember.Object.create({ name: 'Name', attributes: ['name'] }),
+        Ember.Object.create({ name: 'State', attributes: ['us_state', 'state'] }),
+        Ember.Object.create({ name: 'Nickname', attributes: ['nickname'] })
       ],
       datasets: [
         [ 

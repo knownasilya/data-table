@@ -59,8 +59,45 @@ var DataTableHeaderCollection = Ember.CollectionView.extend({
   classNameBindings: ['over'],
   columnsNotInHeader: Ember.computed.alias('parentView.binComponent.columns'),
   itemViewClass: Ember.View.extend({
+    elementId: Ember.computed.alias('name'),
     templateName: 'components/data-table-header-collection-item',
-    tagName: 'td'
+    classNameBindings: ['dropSide'],
+    tagName: 'td',
+    dropSide: null,
+    target: Ember.computed.alias('parentView'),
+
+    dragOver: function (event) {
+      Ember.run.throttle(this, function () {
+        console.log(this.get('elementId'));
+        if (event.originalEvent.offsetX > (this.$().width() / 2)) {
+          console.log('right');
+          this.set('dropSide', 'right');
+        }
+        else {
+          console.log('left');
+          this.set('dropSide', 'left');
+        }
+      }, 150);
+    },
+
+    dragLeave: function () {
+      this.set('dropSide', null);
+    },
+
+    drop: function () {
+      var sideDropped = this.get('dropSide');
+      var data = JSON.parse(event.dataTransfer.getData('application/json'));
+      var column = this.get('parentView.parentView.availableColumns').findBy('name', data.name);
+
+      if (sideDropped === 'left') {
+        this.send('insertBefore', this.get('content'), column);   
+      }
+      else {
+        this.send('insertAfter', this.get('content'), column);   
+      }
+
+      this.set('dropSide', null);
+    }
   }),
 
   dragOver: function (event) {
@@ -91,9 +128,59 @@ var DataTableHeaderCollection = Ember.CollectionView.extend({
     }
     else {
       console.log('duplicate.. delete me!');      
+      if (column) {
+        this.set('columnsNotInHeader', columnsNotInHeader.without(column));
+      }
     }
 
     this.set('over', false);
+  },
+
+  insertAt: function (existing, dropped, add) {
+    var columns = this.get('content');
+    var existingIndex = columns.indexOf(existing);
+    var duplicate = columns.findBy('name', dropped.get('name'));
+    var modifedIndex;
+    var dupIndex;
+
+    if (existing.get('name') === dropped.get('name')) {
+      return;
+    }
+    else {
+      modifiedIndex = existingIndex + add;
+    }
+
+    if (columns) {
+      if (duplicate) {
+        dupIndex = columns.indexOf(duplicate);
+        if (typeof dupIndex === 'number') {
+          columns.arrayContentWillChange(dupIndex, 1, 0);
+          columns.splice(dupIndex, 1);
+          this.set('content', columns);
+          columns.arrayContentDidChange(dupIndex, 1, 0);
+        }
+      }
+      
+      if (modifiedIndex > columns.length) {
+        columns.pushObject(dropped);
+      }
+      else {
+        columns.arrayContentWillChange(modifiedIndex, 0, 1);
+        columns.splice(modifiedIndex, 0, dropped);
+        this.set('content', columns);
+        columns.arrayContentDidChange(modifiedIndex, 0, 1);
+      }
+    } 
+  },
+
+  actions: {
+    insertBefore: function (existing, dropped) {
+      this.insertAt(existing, dropped, 0);  
+    },
+
+    insertAfter: function (existing, dropped) {
+      this.insertAt(existing, dropped, 1);  
+    }
   }
 });
 
