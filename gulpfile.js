@@ -40,7 +40,7 @@ gulp.task('scripts', function () {
     .pipe(gulp.dest('dist'));
 });
 
-gulp.task('serve', serve(['test', 'dist']));
+gulp.task('serve', serve(['test', 'dist', 'bower_components']));
 
 gulp.task('dev', function() {
   var server = livereload();

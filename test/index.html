@@ -4,7 +4,7 @@
   <meta charset="utf-8">
   <title>data-table</title>
 
-  <link rel="stylesheet" href="//netdna.bootstrapcdn.com/bootstrap/3.1.1/css/bootstrap.min.css">
+  <link rel="stylesheet" href="bootstrap/dist/css/bootstrap.min.css">
   <style>
     [draggable] {
       cursor: move;
@@ -25,34 +25,35 @@
 </head>
 
 <body>
-  <script src="http://ajax.googleapis.com/ajax/libs/jquery/1.10.2/jquery.min.js"></script>
-  <script src="http://builds.handlebarsjs.com.s3.amazonaws.com/handlebars-v1.3.0.js"></script>
-  <script src="http://builds.emberjs.com/tags/v1.5.1/ember.js"></script>
+  <script src="jquery/dist/jquery.min.js"></script>
+  <script src="handlebars/handlebars.js"></script>
+  <script src="ember/ember.js"></script>
   <script src="data-table.template.js"></script>
   <script src="data-table.js"></script>
-  <script src="//netdna.bootstrapcdn.com/bootstrap/3.1.1/js/bootstrap.min.js"></script>
+  <script src="bootstrap/dist/js/bootstrap.min.js"></script>
 
   <!-- application.hbs template -->
   <script type="text/x-handlebars">
-    {{data-table-header-bin columns=columns}}
-    {{data-table datasets=datasets columns=columns}}
+    {{data-table datasets=datasets availableColumns=columns requiredHeaderItem=requiredHeaderItem}}
   </script>
 
   <script>
     var App = Ember.Application.create();
 
     App.ApplicationController = Ember.Controller.extend({
+      requiredHeaderItem: { name: 'Name', attributes: ['name'] },
       columns: [
         { name: 'Name', attributes: ['name'] },
-        { name: 'State', attributes: ['us_state', 'state'] }
+        { name: 'State', attributes: ['us_state', 'state'] },
+        { name: 'Nickname', attributes: ['nickname'] }
       ],
       datasets: [
         [ 
-          { name: 'Bob', state: 'CT' },
-          { name: 'Janet', state: 'NJ' }
+          { name: 'Bob', state: 'CT', nickname: 'Bobby' },
+          { name: 'Janet', state: 'NJ', nickname: 'Jan' }
         ],
         [
-          { name: 'John', us_state: 'NY' }
+          { name: 'John', us_state: 'NY', nickname: 'J' }
         ]
       ]
     });

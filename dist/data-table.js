@@ -10,9 +10,20 @@ var DataTableHeaderBinComponent = Ember.Component.extend({
   },
 
   drop: function (event) {
-    var name = event.dataTransfer.getData('text/data');
-    var column = this.get('columns').findBy('name', name);
-    this.get('columns').pushObject(column);
+    var data = JSON.parse(event.dataTransfer.getData('application/json'));
+    var columns = this.get('columns');
+    var headerColumns = this.get('parentView.columns');
+    var requiredColumn = this.get('parentView.requiredHeaderItem');
+    var column;
+
+    if (!columns.findBy('name', data.name) && requiredColumn.name !== data.name) {
+      column = this.get('parentView.availableColumns').findBy('name', data.name);
+      this.get('columns').pushObject(column);
+
+      if (column) {
+        this.set('parentView.columns', headerColumns.without(column));
+      }
+    }
   },
 
   dragEnter: function () {
@@ -30,41 +41,33 @@ var DataTableHeaderItemComponent = Ember.Component.extend({
   draggable: 'true',
 
   dragStart: function (event) {
-    event.dataTransfer.setData('text/data', this.get('content.name'));
+    var data = {
+      id: this.get('elementId'),
+      name: this.get('content.name')
+    };
+
+    event.dataTransfer.setData('application/json', JSON.stringify(data));
   },
 
   dragEnd: function (event) {
-    if (event.dataTransfer.dropEffect === 'copy') {
-      this.destroy();
-
-      if (this.get('parentView.tagName') === 'th') {
-        this.get('parentView').destroy();
-      }
-    }
   }
 });
 
 var DataTableHeaderCollection = Ember.CollectionView.extend({
   tagName: 'tr',
+  content: Ember.computed.alias('parentView.columns'),
   classNameBindings: ['over'],
+  columnsNotInHeader: Ember.computed.alias('parentView.binComponent.columns'),
   itemViewClass: Ember.View.extend({
-    tagName: 'th',
-    templateName: 'components/data-table-header-collection-item'
+    templateName: 'components/data-table-header-collection-item',
+    tagName: 'td'
   }),
-
-  defaultHeaderItemChanged: function () {
-    var content = this.get('content') || [];
-    var defaultHeaderItem = this.get('parentView.defaultHeaderItem');
-
-    content.pushObject(defaultHeaderItem);
-    this.set('content', content);
-  }.observes('parentView.defaultHeaderItem').on('init'),
 
   dragOver: function (event) {
     event.preventDefault();
   },
 
-  dragEnter: function () {
+  dragEnter: function (event) {
     this.set('over', true);
   },
 
@@ -73,12 +76,21 @@ var DataTableHeaderCollection = Ember.CollectionView.extend({
   },
 
   drop: function (event) {
-    var name = event.dataTransfer.getData('text/data');
-    var column = this.get('parentView.columns').findBy('name', name);
+    var data = JSON.parse(event.dataTransfer.getData('application/json'));
+    var column = this.get('parentView.availableColumns').findBy('name', data.name);
     var content = this.get('content');
+    var columnsNotInHeader = this.get('columnsNotInHeader');
 
-    if (!content.contains(column)) {
+    if (!content.findBy('name', column.name)) {
       this.get('content').pushObject(column);
+
+      droppedItem = columnsNotInHeader.findBy('name', data.name);
+      if (droppedItem) {
+        this.set('columnsNotInHeader', columnsNotInHeader.without(droppedItem));
+      }
+    }
+    else {
+      console.log('duplicate.. delete me!');      
     }
 
     this.set('over', false);
@@ -86,9 +98,26 @@ var DataTableHeaderCollection = Ember.CollectionView.extend({
 });
 
 var DataTableComponent = Ember.Component.extend({
-  tagName: 'table',
-  classNames: ['table', 'table-responsive', 'table-hover', 'table-condensed'],
-  defaultHeaderItem: { name: 'Name', attributes: ['name'] },
+  columns: [],
+  columnsNotInHeader: function () {
+    var available = this.get('availableColumns');
+    var displayed = this.get('columns');
+
+    return available.reduce(function (previous, item) {
+      if (!displayed.findBy('name', item.name)) {
+        previous.pushObject(item);
+      }
+
+      return previous;
+    }, []);
+  }.property('availableColumns', 'columns'),
+
+  prePopulateColumns: function () {
+    var required = this.get('requiredHeaderItem');
+
+    this.get('columns').pushObject(required);
+  }.on('init'),
+
   data: function () {
     var datasets = this.get('datasets');
     var columns = this.get('columns');
@@ -114,7 +143,7 @@ var DataTableComponent = Ember.Component.extend({
 
       return previous.concat(mapped);
     }, []);
-  }.property('datasets'),
+  }.property('datasets', 'columns.length'),
 
   columnAttributeMap: function (columns, row) {
     if (!row) {

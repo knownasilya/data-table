@@ -1,12 +1,15 @@
-<thead>
-  {{view 'data-table-header'}}
-</thead>
-<tbody>
-  {{#each data}}
-    <tr>
-      {{#each this}}
-        <td>{{this}}</td>
-      {{/each}}
-    </tr>
-  {{/each}}
-</tbody>
+{{data-table-header-bin columns=columnsNotInHeader viewName='binComponent'}}
+<table class="table table-responsive table-hover table-condensed">
+  <thead>
+    {{view 'data-table-header' viewName='columnCollection'}}
+  </thead>
+  <tbody>
+    {{#each data}}
+      <tr>
+        {{#each this}}
+          <td>{{this}}</td>
+        {{/each}}
+      </tr>
+    {{/each}}
+  </tbody>
+</table>
