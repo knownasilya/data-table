@@ -59,7 +59,7 @@
   <!-- application.hbs template -->
   <script type="text/x-handlebars">
     <div class="container">
-      {{data-table dataset=content availableColumns=columns requiredHeaderItem=requiredHeaderItem}}
+      {{data-table dataset=content defaultColumns=defaultColumns}}
     </div>
   </script>
 
@@ -102,11 +102,7 @@
     });
 
     App.ApplicationController = Ember.ArrayController.extend({
-      requiredHeaderItem: function () {
-        var columns = this.get('columns');
-
-        return columns.findBy('name', 'Name');
-      }.property('columns'),
+      defaultColumns: ['Name'],
 
       columns: [
         Ember.Object.create({ name: 'Name', attributes: ['name'] }),

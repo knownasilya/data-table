@@ -15,10 +15,10 @@ var DataTableHeaderBinComponent = Ember.Component.extend({
     var data = JSON.parse(event.dataTransfer.getData('application/json'));
     var columns = this.get('columns');
     var headerColumns = this.get('parentView.columns');
-    var requiredColumn = this.get('parentView.requiredHeaderItem');
+    var defaultColumns = this.get('parentView.defaultColumns');
     var column;
 
-    if (!columns.findBy('name', data.name) && requiredColumn.name !== data.name) {
+    if (!columns.findBy('name', data.name) && headerColumns.length > 1) {
       column = this.get('parentView.availableColumns').findBy('name', data.name);
       this.get('columns').pushObject(column);
 
@@ -50,6 +50,7 @@ var DataTableHeaderItemComponent = Ember.Component.extend({
       name: this.get('content.name')
     };
 
+    event.dataTransfer.effectAllowed = 'move';
     event.dataTransfer.setData('application/json', JSON.stringify(data));
   },
 
@@ -189,6 +190,11 @@ var DataTableHeaderCollection = Ember.CollectionView.extend({
 
 var DataTableComponent = Ember.Component.extend({
   columns: [],
+  availableColumns: function () {
+    var dataset = this.get('dataset');
+    return this.generateColumns(Ember.keys(dataset.get('content.firstObject').toJSON()));
+  }.property(),
+
   columnsNotInHeader: function () {
     var available = this.get('availableColumns');
     var displayed = this.get('columns');
@@ -203,9 +209,13 @@ var DataTableComponent = Ember.Component.extend({
   }.property('availableColumns', 'columns'),
 
   prePopulateColumns: function () {
-    var required = this.get('requiredHeaderItem');
+    var defaultColumns = this.get('defaultColumns');
+    var availableColumns = this.get('availableColumns');
+    var filtered = availableColumns.filter(function (item) {
+      return defaultColumns.contains(item.get('name'));
+    });
 
-    this.get('columns').pushObject(required);
+    this.get('columns').pushObjects(filtered);
   }.on('init'),
 
   data: function () {
@@ -216,6 +226,7 @@ var DataTableComponent = Ember.Component.extend({
     if (!Ember.isArray(dataset)) {
       throw new Error('Dataset input must be an array.');
     }
+
 
     return dataset.map(function (item) {
       if (columns) {
@@ -249,6 +260,18 @@ var DataTableComponent = Ember.Component.extend({
     }
 
     return result;
+  },
+
+  generateColumns: function (keys, type) {
+    var result = [];
+    
+    return keys.map(function (item) {
+      return Ember.Object.create({
+        name: item.capitalize(),
+        attributes: [item],
+        dataType: type
+      });
+    });
   }
 });
 
