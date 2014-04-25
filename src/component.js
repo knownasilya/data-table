@@ -1,7 +1,9 @@
 var DataTableHeaderBinComponent = Ember.Component.extend({
+  classNames: ['header-item-bin'],
   classNameBindings: ['over'],
 
   dragOver: function (event) {
+    this.set('over', true);
     event.preventDefault();
   },
 
@@ -20,6 +22,8 @@ var DataTableHeaderBinComponent = Ember.Component.extend({
         this.set('parentView.columns', headerColumns.without(column));
       }
     }
+
+    this.set('over', false);
   },
 
   dragEnter: function () {
@@ -58,13 +62,12 @@ var DataTableHeaderCollection = Ember.CollectionView.extend({
     elementId: Ember.computed.alias('name'),
     templateName: 'components/data-table-header-collection-item',
     classNameBindings: ['dropSide'],
-    tagName: 'td',
+    tagName: 'th',
     dropSide: null,
     target: Ember.computed.alias('parentView'),
 
     dragOver: function (event) {
       Ember.run.throttle(this, function () {
-        console.log(this.get('elementId'));
         if (event.originalEvent.offsetX > (this.$().width() / 2)) {
           console.log('right');
           this.set('dropSide', 'right');
@@ -73,11 +76,14 @@ var DataTableHeaderCollection = Ember.CollectionView.extend({
           console.log('left');
           this.set('dropSide', 'left');
         }
+
+        this.set('parentView.over', true);
       }, 150);
     },
 
     dragLeave: function () {
       this.set('dropSide', null);
+      this.set('parentView.over', false);
     },
 
     drop: function () {

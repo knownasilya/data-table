@@ -6,15 +6,15 @@
 
   <link rel="stylesheet" href="bootstrap/dist/css/bootstrap.min.css">
   <style>
-    td {
-      box-sizing: border-box;
+    * {
+      box-sizing: border-box; 
     }
 
-    td.right {
+    th.right {
       border-right: 2px solid #666;
     }
     
-    td.left {
+    th.left {
       border-left: 2px solid #666;
     }
 
@@ -30,8 +30,13 @@
       -webkit-user-drag: element;
     }
 
-    tr.over th {
+    tr.over th.right,
+    tr.over th.left {
       background-color: #eee;
+    }
+
+    .header-item-bin.over .well {
+      background-color: #ddd;
     }
   </style>
 </head>
