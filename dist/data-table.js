@@ -194,10 +194,24 @@ var DataTableHeaderCollection = Ember.CollectionView.extend({
 });
 
 var DataTableComponent = Ember.Component.extend({
-  columns: [],
+  columns: Ember.A(),
+
+  types: function () {
+    return this.get('dataset').reduce(function (previous, current) {
+      if (!previous.findBy('type', current.constructor.typeKey)) {
+        previous.pushObject(Ember.Object.create({
+          type: current.constructor.typeKey,
+          keys: Ember.keys(current.toJSON())
+        }));
+      }
+
+      return previous;
+    }, []);
+  }.property('dataset'),
+
   availableColumns: function () {
-    var firstObject = this.get('dataset.content.firstObject');
-    return this.generateColumns(Ember.keys(firstObject.toJSON()), firstObject.constructor.typeKey);
+    var dataset = this.get('dataset');
+    return this.generateColumns(dataset);
   }.property(),
 
   columnsNotInHeader: function () {
@@ -228,13 +242,17 @@ var DataTableComponent = Ember.Component.extend({
     var columns = this.get('columns');
     var self = this;
 
+    dataset = Ember.isArray(dataset) ? dataset : dataset.get('content');
+
     if (!Ember.isArray(dataset)) {
       throw new Error('Dataset input must be an array.');
     }
 
     return dataset.map(function (item) {
+      var type = item.constructor.typeKey;
+
       if (columns) {
-        return self.columnAttributeMap(columns, item);
+        return self.columnAttributeMap(columns, item, type);
       }
       else {
         return [item];
@@ -242,40 +260,66 @@ var DataTableComponent = Ember.Component.extend({
     });
   }.property('dataset', 'columns.length'),
 
-  columnAttributeMap: function (columns, row) {
+  columnAttributeMap: function (columns, row, type) {
     if (!row) {
       return;
     }
 
     var result = [],
       rowJson = row.toJSON(),
+      rowKeys = Ember.keys(rowJson),
       col = 0,
-      prop, columnIndex;
+      columnsAdded = [],
+      prop, attr;
 
-    for (prop in rowJson) {
-      if (rowJson.hasOwnProperty(prop)) {
-        for(; col < columns.length; col++) {
-          if (columns[col].attributes.contains(prop)) {
-            result.splice(col, 0, rowJson[prop]);
-          }
+    for (; col < columns.length; col++) {
+      columns.objectAt(col).get('attributes').forEach(function (attr) {
+        var split = attr.split(':');
+        prop = split[1];
+        if (rowJson.hasOwnProperty(prop) && !columnsAdded.contains(prop)) {
+          columnsAdded.push(prop);
+          result.splice(col, 0, rowJson[prop]);
         }
-        col = 0;
-      }
+        else if (!columnsAdded.contains(prop)) {
+          result.splice(col, 0, '');
+        }
+      });
     }
 
     return result;
   },
 
-  generateColumns: function (keys, type) {
-    var result = [];
-    
-    return keys.map(function (item) {
-      return Ember.Object.create({
-        name: item.capitalize(),
-        attributes: [item],
-        dataType: type
-      });
-    });
+  generateColumns: function (dataset) {
+    var types = this.get('types');
+
+    if (types) {
+      return types.reduce(function (previous, current, index, arr) {
+        var type = current.get('type');
+
+        current.get('keys').forEach(function (item) {
+          var name = item.capitalize();
+          var column = previous.findBy('name', name);
+          var attribute = type + ':' + item;
+          
+          if (column) {
+            column.get('attributes').pushObject(attribute);
+          }
+          else {
+            previous.pushObject(Ember.Object.create({
+              name: name,
+              attributes: [attribute],
+              dataType: type
+            }));
+          }
+        });
+
+        return previous;
+      }, []);
+    }
+  },
+
+  cleanupMissingValues: function (results, columns) {
+  
   }
 });
 

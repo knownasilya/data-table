@@ -24,6 +24,14 @@
       border-right: 0;
     }
 
+    .type-data {
+      background-color: #506D7D; 
+    }
+
+    .type-blah {
+      background-color: #94CCB9;
+    }
+
     [draggable] {
       cursor: move;
 
@@ -74,6 +82,12 @@
       nickname: DS.attr('string')
     });
 
+    App.BlahModel = DS.Model.extend({
+      name: DS.attr('string'),
+      age: DS.attr('number'),
+      color: DS.attr('string')
+    });
+
     App.DataModel.reopenClass({
       FIXTURES: [
         {
@@ -95,9 +109,22 @@
       ]
     });
 
+    App.BlahModel.reopenClass({
+      FIXTURES: [
+        {
+          id: 1,
+          name: 'foo',
+          age: 15,
+          color: 'red'
+        }
+      ]
+    });
+
     App.ApplicationRoute = Ember.Route.extend({
       model: function () {
-        return this.store.find('data');
+        return Ember.RSVP.all([this.store.find('data'), this.store.find('blah')]).then(function (data) {
+          return data[0].get('content').concat(data[1].get('content'));
+        });
       }
     });
 
