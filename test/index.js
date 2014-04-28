@@ -58,9 +58,9 @@ App.ApplicationController = Ember.ArrayController.extend({
   defaultColumns: ['Name'],
 
   columns: [
-    Ember.Object.create({ name: 'Name', attributes: ['name'] }),
-    Ember.Object.create({ name: 'State', attributes: ['us_state', 'state'] }),
-    Ember.Object.create({ name: 'Nickname', attributes: ['nickname'] })
+    Ember.Object.create({ name: 'Name', attributes: ['data:name', 'blah:name'] }),
+    Ember.Object.create({ name: 'Age', attributes: ['blah:age'] }),
+    Ember.Object.create({ name: 'Nickname', attributes: ['data:nickname'] })
   ],
   datasets: [
     [ 

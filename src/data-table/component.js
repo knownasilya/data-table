@@ -3,6 +3,7 @@ Ember.TEMPLATES['components/data-table'] = require('./template.hbs');
 
 var DataTableComponent = Ember.Component.extend({
   columns: Ember.A(),
+  limit: null,
   dataTableHeader: DataTableHeaderView,
 
   types: function () {
@@ -20,7 +21,8 @@ var DataTableComponent = Ember.Component.extend({
 
   availableColumns: function () {
     var dataset = this.get('dataset');
-    return this.generateColumns(dataset);
+    var aliases = this.get('columnAliases');
+    return aliases && !Ember.isEmpty(aliases) ? aliases : this.generateColumns(dataset);
   }.property(),
 
   columnsNotInHeader: function () {

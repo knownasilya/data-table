@@ -20,5 +20,6 @@ Install via Bower, `bower install data-table --save`, then include in your page,
 
 ### Optional
 - __defaultColumns__ - An array of type/attribute column mappings. These show up in the table. e.g. `['user:name', 'post:title']`.
+- __limit__ - Limits the number of headers to display on the table. 
 
 [1]: http://emberjs.jsbin.com/royob/2
