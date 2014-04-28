@@ -4,7 +4,7 @@ data-table
 Ember Component for comparing two or more similar datasets.
 
 ```hbs
-{{data-table datasets=datasets aliases=aliases}}
+{{data-table dataset=dataset aliases=aliases}}
 ```
 
 Here's a [demo][1] jsbin.
