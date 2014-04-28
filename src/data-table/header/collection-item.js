@@ -3,12 +3,22 @@ Ember.TEMPLATES['components/data-table/collection-item'] = require('./collection
 var CollectionItemView = Ember.View.extend({
   elementId: Ember.computed.alias('name'),
   templateName: 'components/data-table/collection-item',
-  classNameBindings: ['dropSide'],
+  classNameBindings: ['dropSide', 'columnType'],
   tagName: 'th',
   dropSide: null,
   target: Ember.computed.alias('parentView'),
 
+  columnType: function () {
+    var content = this.get('content.name');
+    var postfix = '-column';
+    return content ? (content + postfix).toLowerCase() : 'selectable' + postfix;
+  }.property('content'),
+
   dragOver: function (event) {
+    if (!this.get('content')) {
+      return;
+    }
+
     Ember.run.throttle(this, function () {
       if (event.originalEvent.offsetX > (this.$().width() / 2)) {
         this.set('dropSide', 'right');
@@ -27,6 +37,10 @@ var CollectionItemView = Ember.View.extend({
   },
 
   drop: function () {
+    if (!this.get('content')) {
+      return;
+    }
+
     var sideDropped = this.get('dropSide');
     var data = JSON.parse(event.dataTransfer.getData('application/json'));
     var column = this.get('parentView.parentView.availableColumns').findBy('name', data.name);

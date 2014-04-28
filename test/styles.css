@@ -6,6 +6,10 @@
   margin-top: 5em;
 }
 
+th.selectable-column {
+  width: 30px;
+}
+
 th.right {
   border-right: 2px solid #666;
   border-left: 0;

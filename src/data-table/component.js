@@ -6,6 +6,14 @@ var DataTableComponent = Ember.Component.extend({
   limit: null,
   dataTableHeader: DataTableHeaderView,
 
+  selectable: function () {
+    if (this.get('action')) {
+      return true;
+    }
+    
+    return false;
+  }.property(),
+
   types: function () {
     return this.get('dataset').reduce(function (previous, current) {
       if (!previous.findBy('type', current.constructor.typeKey)) {
@@ -39,13 +47,18 @@ var DataTableComponent = Ember.Component.extend({
   }.property('availableColumns', 'columns'),
 
   prePopulateColumns: function () {
+    var selectable = this.get('selectable');
     var defaultColumns = this.get('defaultColumns');
     var availableColumns = this.get('availableColumns');
     var filtered = availableColumns.filter(function (item) {
       return defaultColumns.contains(item.get('name'));
     });
 
-    this.get('columns').pushObjects(filtered);
+    if (selectable) {
+      filtered.unshift(null);
+    }
+
+    this.set('columns', filtered);
   }.on('init'),
 
   data: function () {
@@ -91,10 +104,16 @@ var DataTableComponent = Ember.Component.extend({
       rowKeys = Ember.keys(rowJson),
       col = 0,
       columnsAdded = [],
-      prop, attr;
+      header, prop, attr;
 
     for (; col < columns.length; col++) {
-      columns.objectAt(col).get('attributes').forEach(function (attr) {
+      header = columns.objectAt(col);
+
+      if (!header) {
+        continue;
+      }
+      
+      header.get('attributes').forEach(function (attr) {
         var split = attr.split(':');
         prop = split[1];
         if (rowJson.hasOwnProperty(prop) && !columnsAdded.contains(prop)) {

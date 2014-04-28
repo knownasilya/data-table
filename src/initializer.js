@@ -6,8 +6,8 @@ Ember.Application.initializer({
   name: 'data-table',
 
   initialize: function(container, application) {
-    container.register('component:data-table', DataTableComponent);
-    container.register('component:data-table-bin', DataTableBinComponent);
-    container.register('component:data-table-column', DataTableColumnComponent);
+    container.register('component:data-table', DataTableComponent, {singleton: false });
+    container.register('component:data-table-bin', DataTableBinComponent, {singleton: false });
+    container.register('component:data-table-column', DataTableColumnComponent, {singleton: false });
   }
 });
