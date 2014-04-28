@@ -19,7 +19,7 @@ var DataTableComponent = Ember.Component.extend({
     var selected = this.get('selectedRows');
 
     this.sendAction('action', selected);
-  }.observes('selectedRows.@each.model.selected'),
+  }.observes('selectedRows.@each.selected'),
 
   selectable: function () {
     if (this.get('action')) {
