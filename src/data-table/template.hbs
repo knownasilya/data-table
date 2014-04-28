@@ -4,13 +4,14 @@
     {{view dataTableHeader viewName='columnCollection'}}
   </thead>
   <tbody>
-    {{#each row in data}}
+    {{#each item in data}}
       <tr>
         {{#if selectable}}
-          <td>{{input type='checkbox'}}</td>
+          <td>{{input type='checkbox' checked=item.selected}}</td>
+          {{log item.model}}
         {{/if}}
 
-        {{#each row}}
+        {{#each item.row}}
           <td>{{this}}</td>
         {{/each}}
       </tr>

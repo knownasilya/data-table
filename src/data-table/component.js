@@ -3,8 +3,23 @@ Ember.TEMPLATES['components/data-table'] = require('./template.hbs');
 
 var DataTableComponent = Ember.Component.extend({
   columns: Ember.A(),
+  dataset: Ember.A(),
   limit: null,
   dataTableHeader: DataTableHeaderView,
+
+  selectedRows: function () {
+    var data = this.get('data');
+
+    return data.filter(function (item) {
+      return item.get('selected') ? true : false;
+    });
+  }.property('data.@each.selected'),
+
+  selectedChanged: function () {
+    var selected = this.get('selectedRows');
+
+    this.sendAction('action', selected);
+  }.observes('selectedRows.@each.model.selected'),
 
   selectable: function () {
     if (this.get('action')) {
@@ -76,12 +91,17 @@ var DataTableComponent = Ember.Component.extend({
       var type = item.constructor.typeKey;
 
       if (columns) {
-        return self.columnAttributeMap(columns, item, type);
+        return Ember.Object.create({
+          row: self.columnAttributeMap(columns, item, type),
+          model: item,
+          selected: false
+        });
       }
 
     }).filter(function (item) {
       // Remove if
-      var allEmpty = item.every(function (col) {
+      var row = item.get('row');
+      var allEmpty = row.every(function (col) {
         return Ember.isEmpty(col)
       });
 
@@ -89,7 +109,7 @@ var DataTableComponent = Ember.Component.extend({
         return false;
       }
       else {
-        return !item.isAny('@this', '');
+        return !row.isAny('@this', '');
       }
     });
   }.property('dataset', 'columns.length'),
@@ -155,6 +175,12 @@ var DataTableComponent = Ember.Component.extend({
 
         return previous;
       }, []);
+    }
+  },
+
+  actions: {
+    clearSelected: function () {
+      throw 'Not Yet Implemented';
     }
   }
 });
