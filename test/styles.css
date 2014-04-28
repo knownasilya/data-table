@@ -1,0 +1,46 @@
+* {
+  box-sizing: border-box; 
+}
+
+.container {
+  margin-top: 5em;
+}
+
+th.right {
+  border-right: 2px solid #666;
+  border-left: 0;
+}
+
+th.left {
+  border-left: 2px solid #666;
+  border-right: 0;
+}
+
+.type-data {
+  background-color: #506D7D; 
+}
+
+.type-blah {
+  background-color: #94CCB9;
+}
+
+[draggable] {
+  cursor: move;
+
+  -moz-user-select: none;
+  -khtml-user-select: none;
+  -webkit-user-select: none;
+  user-select: none;
+  /* Required to make elements draggable in old WebKit */
+  -khtml-user-drag: element;
+  -webkit-user-drag: element;
+}
+
+tr.over th.right,
+tr.over th.left {
+  background-color: #eee;
+}
+
+.header-item-bin.over .well {
+  background-color: #ddd;
+}
