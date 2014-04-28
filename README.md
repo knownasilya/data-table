@@ -16,9 +16,9 @@ Install via Bower, `bower install data-table --save`, then include in your page,
 ### Available Attributes
 
 ### Required
-- datasets - an Array of one or more datasets, each dataset is an Array of objects.
+- __dataset__ - an Array of POJOs or Ember Data model records.
 
 ### Optional
-- aliases - An object mapping dataset object attribute names to column names, e.g. `{ 'Name': ['name', 'user-name'] }`.
+- __defaultColumns__ - An array of type/attribute column mappings. These show up in the table. e.g. `['user:name', 'post:title']`.
 
-[1]: http://emberjs.jsbin.com/nuroraxe/2/
+[1]: http://emberjs.jsbin.com/royob/1
