@@ -6,20 +6,19 @@ var DataTableComponent = Ember.Component.extend({
   dataset: Ember.A(),
   limit: null,
   dataTableHeader: DataTableHeaderView,
+  selectedRows: Ember.computed.filterBy('data', 'selected', true), 
 
-  selectedRows: function () {
-    var data = this.get('data');
-
-    return data.filter(function (item) {
-      return item.get('selected') ? true : false;
-    });
-  }.property('data.@each.selected'),
+  blah: function () {
+    this.get('selectedRows');
+  }.on('init'),
 
   selectedChanged: function () {
     var selected = this.get('selectedRows');
-
-    this.sendAction('action', selected);
-  }.observes('selectedRows.@each.selected'),
+    
+    if (selected && selected.get('length')) {
+      this.sendAction('action', selected);
+    }
+  }.observes('selectedRows'),
 
   selectable: function () {
     if (this.get('action')) {
@@ -80,6 +79,7 @@ var DataTableComponent = Ember.Component.extend({
     var dataset = this.get('dataset');
     var columns = this.get('columns');
     var self = this;
+    var result;
 
     dataset = Ember.isArray(dataset) ? dataset : dataset.get('content');
 
@@ -87,7 +87,7 @@ var DataTableComponent = Ember.Component.extend({
       throw new Error('Dataset input must be an array.');
     }
 
-    return dataset.map(function (item) {
+    result = dataset.map(function (item) {
       var type = item.constructor.typeKey;
 
       if (columns) {
@@ -97,21 +97,24 @@ var DataTableComponent = Ember.Component.extend({
           selected: false
         });
       }
-
     }).filter(function (item) {
-      // Remove if
       var row = item.get('row');
-      var allEmpty = row.every(function (col) {
-        return Ember.isEmpty(col)
-      });
 
-      if (allEmpty) {
-        return false;
-      }
-      else {
-        return !row.isAny('@this', '');
+      if (row) {
+        var allEmpty = row.every(function (col) {
+          return Ember.isEmpty(col)
+        });
+
+        if (allEmpty) {
+          return false;
+        }
+        else {
+          return !row.isAny('@this', '');
+        }
       }
     });
+
+    return result;
   }.property('dataset', 'columns.length'),
 
   columnAttributeMap: function (columns, row, type) {
@@ -180,7 +183,9 @@ var DataTableComponent = Ember.Component.extend({
 
   actions: {
     clearSelected: function () {
-      throw 'Not Yet Implemented';
+      this.get('data').forEach(function (item) {
+        item.set('selected', false);
+      });
     }
   }
 });

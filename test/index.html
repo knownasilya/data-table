@@ -19,7 +19,8 @@
   <!-- application.hbs template -->
   <script type="text/x-handlebars">
     <div class="container">
-      {{data-table dataset=content defaultColumns=defaultColumns action='select'}}
+      <a {{action 'clearSelected' target=view.selectableTable}}>Clear</a>
+      {{data-table dataset=content defaultColumns=defaultColumns action='select' viewName='selectableTable'}}
       {{data-table dataset=content defaultColumns=defaultColumns}}
     </div>
   </script>
