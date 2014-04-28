@@ -1,7 +1,7 @@
-{{data-table-header-bin columns=columnsNotInHeader viewName='binComponent'}}
+{{data-table-bin columns=columnsNotInHeader viewName='binComponent'}}
 <table class="table table-responsive table-hover table-condensed">
   <thead>
-    {{view 'data-table-header' viewName='columnCollection'}}
+    {{view dataTableHeader viewName='columnCollection'}}
   </thead>
   <tbody>
     {{#each data}}
