@@ -14,7 +14,8 @@
     "tabular",
     "component",
     "ember",
-    "emberjs"
+    "emberjs",
+    "web-components"
   ],
   "license": "MIT",
   "ignore": [
