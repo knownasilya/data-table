@@ -6,6 +6,10 @@
   margin-top: 5em;
 }
 
+th .btn.name {
+  font-weight: bold;
+}
+
 th.selectable-column {
   width: 30px;
 }
@@ -18,14 +22,6 @@ th.right {
 th.left {
   border-left: 2px solid #666;
   border-right: 0;
-}
-
-.type-data {
-  background-color: #506D7D; 
-}
-
-.type-blah {
-  background-color: #94CCB9;
 }
 
 [draggable] {

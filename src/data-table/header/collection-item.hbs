@@ -1,3 +1,7 @@
 {{#if view.content}}
-  {{data-table-column content=view.content}}
+  {{#if view.parentView.columnsComposable}}
+    {{data-table-composable-column content=view.content}}
+  {{else}}
+    {{data-table-column content=view.content class='btn btn-xs btn-default'}}
+  {{/if}}
 {{/if}}

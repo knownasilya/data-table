@@ -8,6 +8,7 @@ var DataTableHeaderCollection = Ember.CollectionView.extend({
   limit: Ember.computed.alias('parentView.limit'),
   classNameBindings: ['over'],
   columnsNotInHeader: Ember.computed.alias('parentView.binComponent.columns'),
+  columnsComposable: Ember.computed.alias('parentView.columnsComposable'),
   itemViewClass: CollectionItemView,
 
   dragOver: function (event) {

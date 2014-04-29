@@ -42,14 +42,18 @@ var CollectionItemView = Ember.View.extend({
     }
 
     var sideDropped = this.get('dropSide');
-    var data = JSON.parse(event.dataTransfer.getData('application/json'));
-    var column = this.get('parentView.parentView.availableColumns').findBy('name', data.name);
+    var rawData = event.dataTransfer.getData('application/json');
 
-    if (sideDropped === 'left') {
-      this.send('insertBefore', this.get('content'), column);   
-    }
-    else {
-      this.send('insertAfter', this.get('content'), column);   
+    if (rawData) {
+      var data = JSON.parse(rawData);
+      var column = this.get('parentView.parentView.availableColumns').findBy('name', data.name);
+
+      if (sideDropped === 'left') {
+        this.send('insertBefore', this.get('content'), column);   
+      }
+      else {
+        this.send('insertAfter', this.get('content'), column);   
+      }
     }
 
     this.set('dropSide', null);

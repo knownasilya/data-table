@@ -1,7 +1,6 @@
 Ember.TEMPLATES['components/data-table-column'] = require('./template.hbs');
 
 var DataTableColumnComponent = Ember.Component.extend({
-  classNames: ['label', 'label-default'],
   classNameBindings: ['dataType'],
   attributeBindings: ['draggable'],
   draggable: 'true',

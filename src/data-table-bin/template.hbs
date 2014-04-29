@@ -1,6 +1,10 @@
 <ul class="well well-sm list-unstyled list-inline">
-  {{#each columns}}
-    <li>{{data-table-column content=this}}</li>
+  {{#each column in columns}}
+    {{#if columnsComposable}}
+      <li>{{data-table-composable-column content=column}}</li>
+    {{else}} 
+      <li>{{data-table-column content=column class='btn btn-xs btn-default'}}</li>
+    {{/if}}
   {{else}}
     <li><span class="text-muted">No attributes available.</span></li>
   {{/each}}

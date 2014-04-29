@@ -18,9 +18,9 @@ var DataTableBinComponent = Ember.Component.extend({
 
     if (!columns.findBy('name', data.name) && headerColumns.without(headerColumns.findBy('name', data.name)).compact().length >= 1) {
       column = this.get('parentView.availableColumns').findBy('name', data.name);
-      this.get('columns').pushObject(column);
 
       if (column) {
+        this.get('columns').pushObject(column);
         this.set('parentView.columns', headerColumns.without(column));
       }
     }

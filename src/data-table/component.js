@@ -4,6 +4,7 @@ Ember.TEMPLATES['components/data-table'] = require('./template.hbs');
 var DataTableComponent = Ember.Component.extend({
   columns: Ember.A(),
   dataset: Ember.A(),
+  columnsComposable: false,
   limit: null,
   dataTableHeader: DataTableHeaderView,
   selectedRows: Ember.computed.filterBy('data', 'selected', true), 
