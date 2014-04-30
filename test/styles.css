@@ -10,6 +10,12 @@ th .btn.name {
   font-weight: bold;
 }
 
+[contenteditable='false'].btn.name,
+[contenteditable='true'].btn.name {
+  -khtml-user-drag: none;
+  -webkit-user-drag: none;
+}
+
 th.selectable-column {
   width: 30px;
 }
@@ -24,7 +30,12 @@ th.left {
   border-right: 0;
 }
 
-[draggable] {
+[contenteditable='true'] {
+  cursor: text;
+}
+
+[draggable],
+[draggable] [contenteditable='false']{
   cursor: move;
 
   -moz-user-select: none;
@@ -36,6 +47,10 @@ th.left {
   -webkit-user-drag: element;
 }
 
+[draggable] .dropdown-menu {
+  cursor: default;
+}
+
 tr.over th.right,
 tr.over th.left {
   background-color: #eee;
@@ -43,4 +58,20 @@ tr.over th.left {
 
 .header-item-bin.over .well {
   background-color: #ddd;
+}
+
+span.square-icon {
+  width: 8px;
+  height: 8px;
+  background-color: #888;
+  border: 0;
+  display: inline-block;
+}
+
+.data.square-icon {
+  background-color: red;
+}
+
+.blah.square-icon {
+  background-color: blue;
 }

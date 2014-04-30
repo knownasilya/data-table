@@ -17,8 +17,7 @@ var DataTableComposableColumnComponent = ColumnComponent.extend({
 
   dragStart: function (event) {
     var data = {
-      id: this.get('elementId'),
-      name: this.get('content.name'),
+      id: this.get('content.id'),
       attributes: this.get('content.attributes')
     };
 
@@ -32,6 +31,8 @@ var DataTableComposableColumnComponent = ColumnComponent.extend({
     if (rawData) {
       var data = JSON.parse(rawData);
       var attributes = this.get('content.attributes');
+      var columns = this.get('parentView.columns');
+      var droppedColumn = columns.findBy('id', data.id);
 
       this.set('content.attributes', attributes.concat(data.attributes).uniq());
     }

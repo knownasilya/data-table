@@ -21,7 +21,7 @@
     <div class="container">
       <a {{action 'clearSelected' target=view.selectableTable}}>Clear</a>
       {{data-table dataset=content defaultColumns=defaultColumns action='select' viewName='selectableTable' columnsComposable=true}}
-      {{data-table dataset=content defaultColumns=defaultColumns}}
+      {{data-table dataset=content defaultColumns=defaultColumns autoCompose=false}}
     </div>
   </script>
 

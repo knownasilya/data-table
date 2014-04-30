@@ -55,7 +55,7 @@ App.ApplicationRoute = Ember.Route.extend({
 });
 
 App.ApplicationController = Ember.ArrayController.extend({
-  defaultColumns: ['Name'],
+  defaultColumns: ['data:name'],
 
   columns: [
     Ember.Object.create({ name: 'Name', attributes: ['data:name', 'blah:name'] }),

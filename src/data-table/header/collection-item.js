@@ -1,7 +1,6 @@
 Ember.TEMPLATES['components/data-table/collection-item'] = require('./collection-item.hbs');
 
 var CollectionItemView = Ember.View.extend({
-  elementId: Ember.computed.alias('name'),
   templateName: 'components/data-table/collection-item',
   classNameBindings: ['dropSide', 'columnType'],
   tagName: 'th',
@@ -9,9 +8,10 @@ var CollectionItemView = Ember.View.extend({
   target: Ember.computed.alias('parentView'),
 
   columnType: function () {
-    var content = this.get('content.name');
+    var id = this.get('content.id');
+    id = id ? id.split(':').join('-') : id;
     var postfix = '-column';
-    return content ? (content + postfix).toLowerCase() : 'selectable' + postfix;
+    return id ? (id + postfix) : 'selectable' + postfix;
   }.property('content'),
 
   dragOver: function (event) {
@@ -46,7 +46,7 @@ var CollectionItemView = Ember.View.extend({
 
     if (rawData) {
       var data = JSON.parse(rawData);
-      var column = this.get('parentView.parentView.availableColumns').findBy('name', data.name);
+      var column = this.get('parentView.parentView.availableColumns').findBy('id', data.id);
 
       if (sideDropped === 'left') {
         this.send('insertBefore', this.get('content'), column);   

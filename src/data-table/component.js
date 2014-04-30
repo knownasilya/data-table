@@ -2,16 +2,13 @@ var DataTableHeaderView = require('./header');
 Ember.TEMPLATES['components/data-table'] = require('./template.hbs');
 
 var DataTableComponent = Ember.Component.extend({
+  limit: null,
+  autoCompose: true,
   columns: Ember.A(),
   dataset: Ember.A(),
   columnsComposable: false,
-  limit: null,
   dataTableHeader: DataTableHeaderView,
   selectedRows: Ember.computed.filterBy('data', 'selected', true), 
-
-  blah: function () {
-    this.get('selectedRows');
-  }.on('init'),
 
   selectedChanged: function () {
     var selected = this.get('selectedRows');
@@ -43,9 +40,16 @@ var DataTableComponent = Ember.Component.extend({
   }.property('dataset'),
 
   availableColumns: function () {
-    var dataset = this.get('dataset');
     var aliases = this.get('columnAliases');
-    return aliases && !Ember.isEmpty(aliases) ? aliases : this.generateColumns(dataset);
+
+    if (aliases && !Ember.isEmpty(aliases)) {
+      return aliases;
+    }
+    else {
+      var dataset = this.get('dataset');
+      var generated = this.generateColumns(dataset);
+      return generated;
+    }
   }.property(),
 
   columnsNotInHeader: function () {
@@ -53,7 +57,7 @@ var DataTableComponent = Ember.Component.extend({
     var displayed = this.get('columns');
 
     return available.reduce(function (previous, item) {
-      if (!displayed.findBy('name', item.name)) {
+      if (!displayed.findBy('id', item.get('id'))) {
         previous.pushObject(item);
       }
 
@@ -66,7 +70,8 @@ var DataTableComponent = Ember.Component.extend({
     var defaultColumns = this.get('defaultColumns');
     var availableColumns = this.get('availableColumns');
     var filtered = availableColumns.filter(function (item) {
-      return defaultColumns.contains(item.get('name'));
+      var id = item.get('id');
+      return defaultColumns.contains(id);
     });
 
     if (selectable) {
@@ -118,16 +123,19 @@ var DataTableComponent = Ember.Component.extend({
     return result;
   }.property('dataset', 'columns.length'),
 
-  columnAttributeMap: function (columns, row, type) {
+  columnAttributeMap: function (columns, row, dataType) {
     if (!row) {
       return;
     }
 
     var result = [],
+      //columnsByType = columns.filterBy('attribute.type', dataType),
       rowJson = row.toJSON(),
       rowKeys = Ember.keys(rowJson),
       col = 0,
+      dataAdded = 0,
       columnsAdded = [],
+      key, attr,
       header, prop, attr;
 
     for (; col < columns.length; col++) {
@@ -136,18 +144,36 @@ var DataTableComponent = Ember.Component.extend({
       if (!header) {
         continue;
       }
-      
-      header.get('attributes').forEach(function (attr) {
-        var split = attr.split(':');
-        prop = split[1];
-        if (rowJson.hasOwnProperty(prop) && !columnsAdded.contains(prop)) {
-          columnsAdded.push(prop);
-          result.splice(col, 0, rowJson[prop]);
-        }
-        else if (!columnsAdded.contains(prop)) {
+      dataAdded = result.get('length');
+
+      if (header.get('isComposed')) {
+        header.get('attributes').forEach(function (item) {
+          key = item.get('type') + ':' + item.get('attribute');
+          prop = item.get('attribute');
+
+          if (rowJson.hasOwnProperty(prop) && !columnsAdded.contains(key) && dataType === item.get('type')) {
+            columnsAdded.push(key);
+            result.splice(col, 0, rowJson[prop]);
+          }
+        });
+
+        if (result.get('length') === dataAdded) {
           result.splice(col, 0, '');
         }
-      });
+      }
+      else {
+        key = header.get('id');
+        attr = header.get('attribute');
+        prop = header.get('attribute.attribute');
+
+        if (rowJson.hasOwnProperty(prop) && !columnsAdded.contains(key) && dataType === attr.get('type')) {
+          columnsAdded.push(key);
+          result.splice(col, 0, rowJson[prop]);
+        }
+        else {
+          result.splice(col, 0, '');
+        }
+      }
     }
 
     return result;
@@ -155,24 +181,34 @@ var DataTableComponent = Ember.Component.extend({
 
   generateColumns: function (dataset) {
     var types = this.get('types');
+    var autoCompose = this.get('autoCompose');
 
     if (types) {
       return types.reduce(function (previous, current, index, arr) {
         var type = current.get('type');
 
         current.get('keys').forEach(function (item) {
+          var id = type + ':' + item;
           var name = item.capitalize();
           var column = previous.findBy('name', name);
-          var attribute = type + ':' + item;
+          var attribute = Ember.Object.create({
+            type: type,
+            attribute: item
+          });
           
-          if (column) {
+          if (autoCompose && column) {
+            column.set('isComposed', true);
+            if (column.get('attributes').contains(column.get('attribute'))) {
+              column.get('attributes').pushObject(column.get('attribute'));
+            }
             column.get('attributes').pushObject(attribute);
           }
           else {
             previous.pushObject(Ember.Object.create({
+              id: id,
               name: name,
               attributes: [attribute],
-              dataType: type
+              attribute: attribute
             }));
           }
         });

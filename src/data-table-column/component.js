@@ -1,18 +1,15 @@
 Ember.TEMPLATES['components/data-table-column'] = require('./template.hbs');
 
 var DataTableColumnComponent = Ember.Component.extend({
-  classNameBindings: ['dataType'],
+  classNames: ['dt-type'],
   attributeBindings: ['draggable'],
+  classNameBindings: ['dataType'],
   draggable: 'true',
-
-  dataType: function () {
-    return 'type-' + this.get('content.dataType') || 'default';
-  }.property('content.dataType'),
+  dataType: Ember.computed.alias('content.attribute.type'),
 
   dragStart: function (event) {
     var data = {
-      id: this.get('elementId'),
-      name: this.get('content.name')
+      id: this.get('content.id')
     };
 
     event.dataTransfer.effectAllowed = 'move';

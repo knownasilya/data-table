@@ -31,13 +31,13 @@ var DataTableHeaderCollection = Ember.CollectionView.extend({
     var columns = this.get('content');
     var columnsNotInHeader = this.get('columnsNotInHeader');
     var existingIndex = columns.indexOf(existing);
-    var duplicate = columns.findBy('name', dropped.get('name'));
+    var duplicate = columns.findBy('id', dropped.get('id'));
     var total = this.get('content.length');
     var limit = this.get('limit');
     var modifedIndex;
     var dupIndex;
 
-    if (existing.get('name') === dropped.get('name')) {
+    if (existing.get('id') === dropped.get('id')) {
       return;
     }
     else {

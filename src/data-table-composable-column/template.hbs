@@ -7,7 +7,7 @@
 
 <ul class="dropdown-menu" role="menu">
   {{#each content.attributes}}
-    <li><a href="#">{{this}}</a></li>
+    <li><a href="#"><span {{bind-attr class=':square-icon type' title='type'}}></span> {{attribute}}</a></li>
   {{/each}}
   <li class="divider"></li>
   <li><a href="#" {{action 'editName'}}>Edit Name</a></li>
