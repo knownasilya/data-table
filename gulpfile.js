@@ -26,7 +26,8 @@ gulp.task('dist', function () {
   gulp.src('./dist/data-table.js')
     .pipe(streamify(uglify()))
     .pipe(rename(name + '.min.js'))
-    .pipe(gulp.dest('./dist/'));
+    .pipe(gulp.dest('./dist/'))
+    .on('end', process.exit);
 });
 
 gulp.task('serve', serve(['test', 'dist', 'bower_components']));
@@ -42,5 +43,6 @@ gulp.task('dev', function() {
   });
 });
 
-gulp.task('default', ['clean-dist', 'browserify']);
-
+gulp.task('default', ['clean-dist', 'browserify'], function () {
+  process.exit();
+});
