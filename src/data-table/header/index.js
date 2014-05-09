@@ -1,9 +1,7 @@
 var CollectionItemView = require('./collection-item');
-Ember.TEMPLATES['components/data-table/header'] = require('./template.hbs');
 
 var DataTableHeaderCollection = Ember.CollectionView.extend({
   tagName: 'tr',
-  templateName: 'components/data-table/header',
   content: Ember.computed.alias('parentView.columns'),
   limit: Ember.computed.alias('parentView.limit'),
   classNameBindings: ['over'],
