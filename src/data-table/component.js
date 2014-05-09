@@ -65,16 +65,36 @@ var DataTableComponent = Ember.Component.extend({
     }, []);
   }.property('availableColumns', 'columns'),
 
-  prePopulateColumns: function () {
-    var selectable = this.get('selectable');
+  initialColumns: function () {
     var defaultColumns = this.get('defaultColumns');
     var availableColumns = this.get('availableColumns');
+    var counter = 0;
+    var limit = this.get('limit');
+    var hasDefaults = (defaultColumns && defaultColumns.length);
+
     var filtered = availableColumns.filter(function (item) {
       var id = item.get('id');
-      return defaultColumns.contains(id);
+      var result;
+
+      if (hasDefaults) {
+        result = defaultColumns.contains(id);
+      }
+      else {
+        result = (!limit || counter < limit ? true : false);
+        counter++;
+      }
+
+      return result;
     });
 
-    if (selectable) {
+    return filtered;
+  }.property('availableColumns'),
+
+  prePopulateColumns: function () {
+    var selectable = this.get('selectable');
+    var filtered = this.get('initialColumns');
+
+    if (selectable && filtered) {
       filtered.unshift(null);
     }
 
