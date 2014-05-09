@@ -10,11 +10,11 @@ var browserify = require('browserify');
 var name = 'data-table';
 
 gulp.task('clean-dist', function () {
-  gulp.src('dist', { read: false })
+  return gulp.src('dist', { read: false })
     .pipe(clean());
 });
 
-gulp.task('browserify', function () {
+gulp.task('browserify', ['clean-dist'], function () {
   return browserify('./src/initializer.js')
     .bundle({ debug: true })
     //Pass desired output filename to vinyl-source-stream
@@ -22,12 +22,11 @@ gulp.task('browserify', function () {
     .pipe(gulp.dest('./dist/'));
 });
 
-gulp.task('dist', function () {
-  gulp.src('./dist/data-table.js')
+gulp.task('dist', ['browserify'], function () {
+  return gulp.src('./dist/data-table.js')
     .pipe(streamify(uglify()))
     .pipe(rename(name + '.min.js'))
-    .pipe(gulp.dest('./dist/'))
-    .on('end', process.exit);
+    .pipe(gulp.dest('./dist/'));
 });
 
 gulp.task('serve', serve(['test', 'dist', 'bower_components']));
@@ -44,6 +43,9 @@ gulp.task('dev', function() {
 });
 
 gulp.task('basic', ['clean-dist', 'browserify']);
+gulp.task('build', ['dist'], function () {
+  process.exit();
+});
 
 gulp.task('default', ['clean-dist', 'browserify'], function () {
   process.exit();
