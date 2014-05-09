@@ -7,7 +7,7 @@ Ember Component for comparing two or more similar datasets.
 {{data-table dataset=dataset}}
 ```
 
-Here's a [demo][1] jsbin.
+Here's a [demo][demo] jsbin.
 
 ## Getting Started
 
@@ -22,4 +22,4 @@ Install via Bower, `bower install data-table --save`, then include in your page,
 - __defaultColumns__ - An array of type/attribute column mappings. These show up in the table. e.g. `['user:name', 'post:title']`.
 - __limit__ - Limits the number of headers to display on the table. 
 
-[1]: http://emberjs.jsbin.com/royob/2
+[demo]: http://emberjs.jsbin.com/royob/4/
