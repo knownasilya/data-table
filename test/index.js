@@ -70,5 +70,12 @@ App.ApplicationController = Ember.ArrayController.extend({
     [
       { name: 'John', us_state: 'NY', nickname: 'J' }
     ]
-  ]
+  ],
+
+  actions: {
+    select: function (selected) {
+      console.log(selected);
+      this.set('selected', selected);
+    }
+  }
 });

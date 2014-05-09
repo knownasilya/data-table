@@ -8,15 +8,14 @@ var DataTableComponent = Ember.Component.extend({
   dataset: Ember.A(),
   columnsComposable: false,
   dataTableHeader: DataTableHeaderView,
-  selectedRows: Ember.computed.filterBy('data', 'selected', true), 
 
   selectedChanged: function () {
-    var selected = this.get('selectedRows');
+    var selected = this.get('data').filterBy('selected', true);
     
-    if (selected && selected.get('length')) {
+    if (selected) {
       this.sendAction('action', selected);
     }
-  }.observes('selectedRows'),
+  }.observes('data.@each.selected'),
 
   selectable: function () {
     if (this.get('action')) {
