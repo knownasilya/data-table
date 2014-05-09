@@ -35,13 +35,15 @@ gulp.task('serve', serve(['test', 'dist', 'bower_components']));
 gulp.task('dev', function() {
   var server = livereload();
 
-  gulp.start('default');
+  gulp.start('basic');
   gulp.start('serve');
   gulp.watch('./src/**/*.{js,hbs}', ['browserify']);
   gulp.watch('dist/*.js').on('change', function(file) {
     server.changed(file.path);
   });
 });
+
+gulp.task('basic', ['clean-dist', 'browserify']);
 
 gulp.task('default', ['clean-dist', 'browserify'], function () {
   process.exit();
